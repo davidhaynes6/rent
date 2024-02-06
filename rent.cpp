@@ -1,4 +1,5 @@
 #include "rent.h"
+#include "dbproperty.h"
 #include "propertiessheet.h"
 
 rent::rent(QWidget *parent) : QMainWindow(parent)
@@ -15,3 +16,10 @@ rent::rent(QWidget *parent) : QMainWindow(parent)
 
 rent::~rent()
 {}
+
+void rent::initialize()
+{
+    // Load Properties from database
+    DbProperty db;
+    db.createDatabaseAndTable();
+}

@@ -58,12 +58,24 @@
     <ClCompile Include="propertiessheet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="property.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dbproperty.h">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dbproperty.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="spreadsheetitem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="propertiessheet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="property.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -38,7 +38,7 @@
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
     <QtInstall>6.6.1_msvc2019_64</QtInstall>
-    <QtModules>core;gui;widgets</QtModules>
+    <QtModules>core;gui;widgets;sql</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
@@ -89,7 +89,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="dbproperty.h" />
+    <ClCompile Include="dbproperty.cpp" />
     <ClCompile Include="propertiessheet.cpp" />
+    <ClCompile Include="property.cpp" />
     <ClCompile Include="spreadsheet.cpp" />
     <ClCompile Include="spreadsheetdelegate.cpp" />
     <ClCompile Include="spreadsheetitem.cpp" />
@@ -103,6 +106,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="propertiessheet.h" />
+    <ClInclude Include="property.h" />
     <QtMoc Include="spreadsheet.h" />
     <QtMoc Include="spreadsheetdelegate.h" />
     <ClInclude Include="spreadsheetitem.h" />
