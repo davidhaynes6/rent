@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>rentClass</class>
+ <widget class="QMainWindow" name="rentClass">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>600</width>
+    <height>400</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>rent</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QFormLayout" name="formLayout">
+    <item row="0" column="0" colspan="2">
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="tabPosition">
+       <enum>QTabWidget::South</enum>
+      </property>
+      <property name="tabShape">
+       <enum>QTabWidget::Rounded</enum>
+      </property>
+      <property name="currentIndex">
+       <number>2</number>
+      </property>
+      <property name="movable">
+       <bool>true</bool>
+      </property>
+      <property name="tabBarAutoHide">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="tabDashBoard">
+       <attribute name="title">
+        <string>Dashboard</string>
+       </attribute>
+      </widget>
+      <widget class="QWidget" name="tabProperities">
+       <attribute name="title">
+        <string>Properities</string>
+       </attribute>
+       <widget class="QWidget" name="widgetProperties" native="true">
+        <property name="geometry">
+         <rect>
+          <x>9</x>
+          <y>-1</y>
+          <width>581</width>
+          <height>321</height>
+         </rect>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="tabMaintenance">
+       <attribute name="title">
+        <string>Maintenance</string>
+       </attribute>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>600</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionE_xit"/>
+   </widget>
+   <addaction name="menuFile"/>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionE_xit">
+   <property name="text">
+    <string>E&amp;xit</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources>
+  <include location="rent.qrc"/>
+ </resources>
+ <connections/>
+</ui>
