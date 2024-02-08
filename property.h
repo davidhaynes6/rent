@@ -4,7 +4,7 @@
 class Property {
 public:
     // Constructor
-    Property(const QString& rentalAddress, const QString& date, int initialPrice, double interest, int zillowEstimate, int netWorth);
+    Property(int id, const QString& rentalAddress, const QString& date, int initialPrice, double interest, int zillowEstimate, int netWorth);
 
     // Getters
     int id() const;

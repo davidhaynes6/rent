@@ -7,8 +7,8 @@
 #include <vector>
 
 // Constructor
-Property::Property(const QString& rentalAddress, const QString& date, int initialPrice, double interest, int zillowEstimate, int netWorth)
-    : m_rentalAddress(rentalAddress), m_date(date), m_initialPrice(initialPrice), m_interest(interest), m_zillowEstimate(zillowEstimate), m_netWorth(netWorth) {}
+Property::Property(int id, const QString& rentalAddress, const QString& date, int initialPrice, double interest, int zillowEstimate, int netWorth)
+    : m_id(id), m_rentalAddress(rentalAddress), m_date(date), m_initialPrice(initialPrice), m_interest(interest), m_zillowEstimate(zillowEstimate), m_netWorth(netWorth) {}
 
 // Getters
 int Property::id() const { return m_id; }

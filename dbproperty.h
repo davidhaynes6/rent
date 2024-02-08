@@ -16,6 +16,8 @@ public:
     std::vector<Property> loadFromDatabase();
     bool saveToDatabase(const std::vector<Property>& properties);
     bool createDatabaseAndTable();
+    bool insertExampleData();
+    bool databaseExists() const;
 
 private:
     bool openDatabase(); // Utility function to open database connection

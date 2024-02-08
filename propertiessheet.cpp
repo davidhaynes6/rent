@@ -1,12 +1,76 @@
 #include "propertiessheet.h"
 #include "spreadsheetitem.h"
 
-PropertiesSheet::PropertiesSheet(int rows, int cols, QWidget* parent)
-    : SpreadSheet(rows, cols, parent) 
+PropertiesSheet::PropertiesSheet(std::vector<Property>& properties, int rows, int cols, QWidget* parent)
+    : SpreadSheet(rows, cols, parent), properties(properties)
 {
     setupContents();
 }
 
+std::vector<Property> PropertiesSheet::collectPropertiesFromUI() {
+    std::vector<Property> properties;
+    for (int row = 1; row < table->rowCount(); ++row) { // Start from 1 to skip header
+        int id = table->item(row, 0)->data(Qt::UserRole).toInt(); // Retrieve the id
+        QString rentalAddress = table->item(row, 0)->text();
+        QString date = table->item(row, 1)->text();
+        int initialPrice = table->item(row, 2)->text().toInt();
+        double interest = table->item(row, 3)->text().toDouble();
+        int zillowEstimate = table->item(row, 4)->text().toInt();
+        int netWorth = table->item(row, 5)->text().toInt();
+
+        Property prop(id, rentalAddress, date, initialPrice, interest, zillowEstimate, netWorth);
+        properties.push_back(prop);
+    }
+    return properties;
+}
+
+
+void PropertiesSheet::setupContents()
+{
+    QBrush titleBackground(Qt::lightGray);
+    QFont titleFont = table->font();
+    titleFont.setBold(true);
+
+    // Assuming your table has been properly initialized somewhere else
+    // Set the number of rows based on the properties vector size plus one for the header row
+    table->setRowCount(properties.size() + 1);
+
+    // Define the headers for each column
+    QStringList headers = { "Rental Address", "Date", "Initial Price", "Interest", "Zillow Estimate", "Net Worth" };
+    table->setColumnCount(headers.size());
+    for (int i = 0; i < headers.size(); ++i) {
+        table->setItem(0, i, new SpreadSheetItem(headers[i]));
+        table->item(0, i)->setBackground(titleBackground);
+        table->item(0, i)->setFont(titleFont);
+        // Optionally set tooltips for each header
+        // e.g., table->item(0, i)->setToolTip("Tooltip here");
+    }
+
+    // Populate the table with data from properties vector
+    for (size_t row = 0; row < properties.size(); ++row) {
+        const Property& prop = properties[row];
+
+        // Create an item for the rental address as an example
+        auto* item = new SpreadSheetItem(prop.rentalAddress());
+        // Store the id as hidden data within the item
+        item->setData(Qt::UserRole, QVariant(prop.id()));
+
+        // Set the item in the table
+        table->setItem(row + 1, 0, item);
+
+        // Continue setting other properties as before
+        table->setItem(row + 1, 1, new SpreadSheetItem(prop.date()));
+        table->setItem(row + 1, 2, new SpreadSheetItem(QString::number(prop.initialPrice())));
+        table->setItem(row + 1, 3, new SpreadSheetItem(QString::number(prop.interest(), 'f', 2))); // Example formatting
+        table->setItem(row + 1, 4, new SpreadSheetItem(QString::number(prop.zillowEstimate())));
+        table->setItem(row + 1, 5, new SpreadSheetItem(QString::number(prop.netWorth())));
+    }
+
+    // Adjust column widths and any additional formatting as needed
+    // e.g., table->resizeColumnsToContents();
+}
+
+/*
 void PropertiesSheet::setupContents()
 {
     QBrush titleBackground(Qt::lightGray);
@@ -122,3 +186,4 @@ void PropertiesSheet::setupContents()
     table->setItem(9, 5, new SpreadSheetItem("sum F2 F9"));
     table->item(9, 5)->setBackground(titleBackground);
 }
+*/

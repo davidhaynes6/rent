@@ -10,6 +10,7 @@
 bool DbProperty::openDatabase() {
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName(RENT_DATABASE);
+
     if (!db.open()) {
         qDebug() << "Error: connection with database failed";
         return false;
@@ -17,10 +18,16 @@ bool DbProperty::openDatabase() {
     return true;
 }
 
+bool DbProperty::databaseExists() const {
+    return QFile::exists(RENT_DATABASE);
+}
+
 bool DbProperty::createDatabaseAndTable() {
     if (!openDatabase()) return false;
-    QSqlQuery query;
-    bool result = query.exec("CREATE TABLE IF NOT EXISTS property ("
+
+    // Create the table if it doesn't exist
+    QSqlQuery createQuery;
+    bool result = createQuery.exec("CREATE TABLE IF NOT EXISTS Property ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT, "
         "rental_address TEXT NOT NULL, "
         "date TEXT NOT NULL, "
@@ -28,25 +35,26 @@ bool DbProperty::createDatabaseAndTable() {
         "interest REAL NOT NULL, "
         "zillow_estimate INTEGER NOT NULL, "
         "net_worth INTEGER NOT NULL)");
-    if (!result) {
-        qDebug() << "Failed to create table:" << query.lastError();
-    } else {
-        // Insert initial example data
-        const char* initialData[] = {
-            "INSERT INTO property (rental_address, date, initial_price, interest, zillow_estimate, net_worth) VALUES ('1038 Burns Avenue', '7/1/2019', 195000, 4.0, 376300, 181300)",
-            "INSERT INTO property (rental_address, date, initial_price, interest, zillow_estimate, net_worth) VALUES ('3130 Coral Park Drive', '7/1/2020', 210000, 6.125, 247100, 37100)",
-        };
 
-        for (const char* sql : initialData) {
-            if (!query.exec(sql)) {
-                qDebug() << "Failed to insert initial data:" << query.lastError();
-                result = false;
-            }
-        }
+    if (!result) {
+        qDebug() << "Failed to create Property table:" << createQuery.lastError();
+        QSqlDatabase::database().close();
     }
 
     QSqlDatabase::database().close();
     return result;
+}
+
+bool DbProperty::insertExampleData() {
+    // Example list of properties to insert
+    std::vector<Property> exampleProperties = {
+        Property(-1, "1234 Maple Street", "2022-01-01", 120000, 3.5, 125000, 130000),
+        Property(-1, "5678 Oak Avenue", "2022-02-01", 150000, 3.2, 155000, 160000),
+        Property(-1, "9101 Pine Lane", "2022-03-01", 100000, 3.8, 105000, 110000),
+    };
+
+    // Insert the example properties into the database
+    return saveToDatabase(exampleProperties);
 }
 
 std::vector<Property> DbProperty::loadFromDatabase() {
@@ -69,7 +77,7 @@ std::vector<Property> DbProperty::loadFromDatabase() {
         int zillowEstimate = query.value(5).toInt();
         int netWorth = query.value(6).toInt();
 
-        Property property(rentalAddress, date, initialPrice, interest, zillowEstimate, netWorth);
+        Property property(id, rentalAddress, date, initialPrice, interest, zillowEstimate, netWorth);
         properties.push_back(property);
     }
 
@@ -90,12 +98,21 @@ bool DbProperty::saveToDatabase(const std::vector<Property>& properties) {
     QSqlDatabase::database().transaction();
 
     for (const Property& property : properties) {
-        query.prepare("INSERT INTO property (id, rental_address, date, initial_price, interest, zillow_estimate, net_worth) "
-            "VALUES (:id, :rental_address, :date, :initial_price, :interest, :zillow_estimate, :net_worth) "
-            "ON CONFLICT(id) DO UPDATE SET "
-            "rental_address=:rental_address, date=:date, initial_price=:initial_price, "
-            "interest=:interest, zillow_estimate=:zillow_estimate, net_worth=:net_worth");
-        query.bindValue(":id", property.id());
+        if (property.id() > 0) {
+            // Update existing property
+            query.prepare("UPDATE property SET "
+                "rental_address=:rental_address, date=:date, initial_price=:initial_price, "
+                "interest=:interest, zillow_estimate=:zillow_estimate, net_worth=:net_worth "
+                "WHERE id=:id");
+            query.bindValue(":id", property.id());
+        }
+        else {
+            // Insert new property, omitting the ID to allow auto-increment
+            query.prepare("INSERT INTO property (rental_address, date, initial_price, interest, zillow_estimate, net_worth) "
+                "VALUES (:rental_address, :date, :initial_price, :interest, :zillow_estimate, :net_worth)");
+        }
+
+        // Bind the values for both insert and update operations
         query.bindValue(":rental_address", property.rentalAddress());
         query.bindValue(":date", property.date());
         query.bindValue(":initial_price", property.initialPrice());
@@ -104,14 +121,14 @@ bool DbProperty::saveToDatabase(const std::vector<Property>& properties) {
         query.bindValue(":net_worth", property.netWorth());
 
         if (!query.exec()) {
-            qDebug() << "Failed to insert property data:" << query.lastError();
+            qDebug() << "Failed to save property data:" << query.lastError();
             result = false;
             break; // Exit loop on first failure
         }
     }
 
     if (result) {
-        QSqlDatabase::database().commit(); // Commit transaction if all inserts were successful
+        QSqlDatabase::database().commit(); // Commit transaction if all operations were successful
     }
     else {
         QSqlDatabase::database().rollback(); // Rollback transaction on failure
